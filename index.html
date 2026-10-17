@@ -1726,6 +1726,14 @@
     signOut, 
     onAuthStateChanged 
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getFirestore,
+    collection,
+    doc,
+    setDoc,
+    deleteDoc,
+    onSnapshot
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAsKXYlMx27-BeE5yBkifhyjcMT4u6iL9o",
@@ -1740,15 +1748,52 @@
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
   const auth = getAuth(app);
+  const db = getFirestore(app);
 
   window.firebaseAuth = auth;
+  window.db = db;
 
+  // Ouvintes Firestore em Tempo Real
   onAuthStateChanged(auth, (user) => {
     if (user) {
       document.getElementById('authView').style.display = 'none';
       document.getElementById('homeView').style.display = 'flex';
       document.getElementById('bottomNav').style.display = 'flex';
       toast('Sessão iniciada com segurança!', 'success');
+
+      // Sincroniza Produtos
+      onSnapshot(collection(db, "products"), (snapshot) => {
+        window.products = [];
+        snapshot.forEach(doc => {
+          window.products.push(doc.data());
+        });
+        localStorage.setItem('pdv_products', JSON.stringify(window.products));
+        renderProducts();
+        renderCatalog();
+      });
+
+      // Sincroniza Clientes
+      onSnapshot(collection(db, "clients"), (snapshot) => {
+        window.clients = [];
+        snapshot.forEach(doc => {
+          window.clients.push(doc.data());
+        });
+        localStorage.setItem('pdv_clients', JSON.stringify(window.clients));
+        renderClients();
+        renderPromos();
+      });
+
+      // Sincroniza Vendas
+      onSnapshot(collection(db, "sales"), (snapshot) => {
+        window.sales = [];
+        snapshot.forEach(doc => {
+          window.sales.push(doc.data());
+        });
+        window.sales.sort((a, b) => b.id - a.id);
+        localStorage.setItem('pdv_sales', JSON.stringify(window.sales));
+        renderSales();
+      });
+
     } else {
       document.getElementById('authView').style.display = 'flex';
       document.getElementById('homeView').style.display = 'none';
@@ -1781,34 +1826,81 @@
       toast('Você saiu do sistema!', 'success');
     });
   };
+
+  // Funções globais Firebase Firestore
+  window.saveProductFirebase = async function(product) {
+    if (!window.db) return;
+    try {
+      await setDoc(doc(window.db, "products", String(product.id)), product);
+    } catch(e) {
+      console.error("Erro ao salvar produto no Firebase:", e);
+    }
+  };
+
+  window.deleteProductFirebase = async function(id) {
+    if (!window.db) return;
+    try {
+      await deleteDoc(doc(window.db, "products", String(id)));
+    } catch(e) {
+      console.error("Erro ao deletar produto no Firebase:", e);
+    }
+  };
+
+  window.saveClientFirebase = async function(client) {
+    if (!window.db) return;
+    try {
+      await setDoc(doc(window.db, "clients", String(client.id)), client);
+    } catch(e) {
+      console.error("Erro ao salvar cliente no Firebase:", e);
+    }
+  };
+
+  window.deleteClientFirebase = async function(id) {
+    if (!window.db) return;
+    try {
+      await deleteDoc(doc(window.db, "clients", String(id)));
+    } catch(e) {
+      console.error("Erro ao deletar cliente no Firebase:", e);
+    }
+  };
+
+  window.saveSaleFirebase = async function(sale) {
+    if (!window.db) return;
+    try {
+      await setDoc(doc(window.db, "sales", String(sale.id)), sale);
+    } catch(e) {
+      console.error("Erro ao salvar venda no Firebase:", e);
+    }
+  };
+
+  window.deleteSaleFirebase = async function(id) {
+    if (!window.db) return;
+    try {
+      await deleteDoc(doc(window.db, "sales", String(id)));
+    } catch(e) {
+      console.error("Erro ao deletar venda no Firebase:", e);
+    }
+  };
 </script>
 
 <script>
-  let products = JSON.parse(localStorage.getItem('pdv_products') || '[]');
+  window.products = JSON.parse(localStorage.getItem('pdv_products') || '[]');
   let cart = [];
-  let sales = JSON.parse(localStorage.getItem('pdv_sales') || '[]');
-  let clients = JSON.parse(localStorage.getItem('pdv_clients') || '[]');
+  window.sales = JSON.parse(localStorage.getItem('pdv_sales') || '[]');
+  window.clients = JSON.parse(localStorage.getItem('pdv_clients') || '[]');
   let html5QrCode = null;
   let scanMode = 'cart';
   let currentImageData = null;
   let currentClient = null;
 
-  products.forEach(p => {
+  window.products.forEach(p => {
     if (!('description' in p)) p.description = '';
     if (!('promoActive' in p)) p.promoActive = false;
     if (!('promoQuantity' in p)) p.promoQuantity = 0;
   });
-  clients.forEach(c => {
+  window.clients.forEach(c => {
     if (!('promoProgress' in c)) c.promoProgress = {};
   });
-
-  if (products.length === 0) {
-    products = [
-      { id: 1, name: 'Coca-Cola 350ml', code: '7891000100103', price: 5.50, stock: 50, category: 'bebidas', image: null, description: 'Refrigerante sabor cola, lata gelada', promoActive: false, promoQuantity: 0 },
-      { id: 2, name: 'Pão Francês (un)', code: '0000000000001', price: 0.80, stock: 200, category: 'alimentos', image: null, description: 'Pão fresquinho', promoActive: false, promoQuantity: 0 }
-    ];
-    saveProducts();
-  }
 
   function updateTime() {
     const now = new Date();
@@ -1993,7 +2085,7 @@
     document.getElementById('manualCode').value = '';
   }
   function addToCart(code) {
-    const product = products.find(p => p.code === code);
+    const product = window.products.find(p => p.code === code);
     if (!product) { toast('Produto não encontrado: ' + code, 'error'); return; }
     if (product.stock <= 0) { toast('Produto sem estoque!', 'error'); return; }
     const item = cart.find(c => c.id === product.id);
@@ -2009,7 +2101,7 @@
   function changeQty(id, delta) {
     const item = cart.find(c => c.id === id);
     if (!item) return;
-    const product = products.find(p => p.id === id);
+    const product = window.products.find(p => p.id === id);
     const newQty = item.qty + delta;
     if (newQty <= 0) cart = cart.filter(c => c.id !== id);
     else if (newQty > product.stock) { toast('Estoque insuficiente!', 'error'); return; }
@@ -2044,12 +2136,19 @@
       date: new Date().toISOString(),
       client: currentClient ? { id: currentClient.id, name: currentClient.name, whatsapp: currentClient.whatsapp, delivery: currentClient.delivery, address: currentClient.address, neighborhood: currentClient.neighborhood } : null
     };
-    cart.forEach(item => { const p = products.find(pr => pr.id === item.id); if (p) p.stock -= item.qty; });
+
+    cart.forEach(item => {
+      const p = window.products.find(pr => pr.id === item.id);
+      if (p) {
+        p.stock -= item.qty;
+        if (window.saveProductFirebase) window.saveProductFirebase(p);
+      }
+    });
 
     if (currentClient) {
       if (!currentClient.promoProgress) currentClient.promoProgress = {};
       cart.forEach(item => {
-        const product = products.find(p => p.id === item.id);
+        const product = window.products.find(p => p.id === item.id);
         if (product && product.promoActive && product.promoQuantity > 0) {
           let currentCount = currentClient.promoProgress[product.id] || 0;
           let newTotal = currentCount + item.qty;
@@ -2064,14 +2163,11 @@
           }
         }
       });
-      const clientIndex = clients.findIndex(c => c.id === currentClient.id);
-      if (clientIndex !== -1) clients[clientIndex] = currentClient;
-      saveClients();
+      if (window.saveClientFirebase) window.saveClientFirebase(currentClient);
     }
 
-    sales.unshift(sale);
-    localStorage.setItem('pdv_sales', JSON.stringify(sales));
-    saveProducts();
+    if (window.saveSaleFirebase) window.saveSaleFirebase(sale);
+
     cart = []; currentClient = null;
     updateSelectedClientDisplay();
     renderCart();
@@ -2109,7 +2205,7 @@
   function closeClientSelectionModal() { document.getElementById('clientSelectionModal').classList.remove('active'); }
   function renderClientSelectionList() {
     const search = (document.getElementById('searchClientSelection').value || '').toLowerCase().trim();
-    const filtered = clients.filter(c => c.name.toLowerCase().includes(search) || c.whatsapp.includes(search) || formatWhatsapp(c.whatsapp).includes(search));
+    const filtered = window.clients.filter(c => c.name.toLowerCase().includes(search) || c.whatsapp.includes(search) || formatWhatsapp(c.whatsapp).includes(search));
     const list = document.getElementById('clientSelectionList');
     if (filtered.length === 0) {
       list.innerHTML = '<div class="empty" style="padding: 20px;"><div class="empty-text">Nenhum cliente encontrado</div></div>';
@@ -2124,7 +2220,7 @@
     }
   }
   function selectClientForSaleById(id) {
-    const client = clients.find(c => c.id === id);
+    const client = window.clients.find(c => c.id === id);
     if (client) { currentClient = client; updateSelectedClientDisplay(); closeClientSelectionModal(); toast('Cliente selecionado: ' + client.name, 'success'); }
   }
   function clearSelectedClient() { currentClient = null; updateSelectedClientDisplay(); closeClientSelectionModal(); toast('Cliente removido', 'success'); }
@@ -2155,10 +2251,10 @@
     const deleteMode = search.includes('deletar');
 
     const list = document.getElementById('promoClientList');
-    let participatingClients = clients.filter(c => {
+    let participatingClients = window.clients.filter(c => {
       if (!c.promoProgress) return false;
       const hasProgress = Object.keys(c.promoProgress).some(prodId => {
-        const prod = products.find(p => p.id === parseInt(prodId));
+        const prod = window.products.find(p => p.id === parseInt(prodId));
         return prod && prod.promoActive && c.promoProgress[prodId] > 0;
       });
       return hasProgress;
@@ -2186,7 +2282,7 @@
       const addressText = (c.delivery && c.address) ? `${c.address}${c.neighborhood ? ' - ' + c.neighborhood : ''}` : 'Não informado';
       let promoItemsHtml = '';
       for (const [prodId, count] of Object.entries(c.promoProgress)) {
-        const prod = products.find(p => p.id === parseInt(prodId));
+        const prod = window.products.find(p => p.id === parseInt(prodId));
         if (prod && prod.promoActive && count > 0) {
           const isVid = prod.image && prod.image.startsWith('data:video');
           const imgHtml = prod.image ? (isVid ? `<video src="${prod.image}" style="width:40px; height:40px; border-radius:8px; object-fit:cover; margin-right:8px;"></video>` : `<img src="${prod.image}" style="width:40px; height:40px; border-radius:8px; object-fit:cover; margin-right:8px;">`) : `<div style="width:40px; height:40px; border-radius:8px; background:var(--bg-dark); color:var(--accent-orange); display:flex; align-items:center; justify-content:center; margin-right:8px; font-size:20px;">📦</div>`;
@@ -2215,23 +2311,23 @@
   }
 
   function deletePromoItem(clientId, productId) {
-    const c = clients.find(cl => cl.id === clientId);
+    const c = window.clients.find(cl => cl.id === clientId);
     if (!c || !c.promoProgress) return;
-    const prod = products.find(p => p.id === productId);
+    const prod = window.products.find(p => p.id === productId);
     const prodName = prod ? prod.name : 'produto';
     if (!confirm(`Deseja realmente deletar a promoção de "${prodName}" para ${c.name}?`)) return;
     delete c.promoProgress[productId];
-    saveClients();
+    if (window.saveClientFirebase) window.saveClientFirebase(c);
     renderPromos();
     toast('Promoção deletada!', 'success');
   }
 
   function deletePromoClient(clientId) {
-    const c = clients.find(cl => cl.id === clientId);
+    const c = window.clients.find(cl => cl.id === clientId);
     if (!c) return;
     if (!confirm(`Deseja realmente deletar TODAS as promoções de ${c.name}?`)) return;
     c.promoProgress = {};
-    saveClients();
+    if (window.saveClientFirebase) window.saveClientFirebase(c);
     renderPromos();
     toast('Promoções do cliente deletadas!', 'success');
   }
@@ -2240,7 +2336,7 @@
     const search = document.getElementById('searchCatalog').value.toLowerCase().trim();
     const clearBtn = document.getElementById('clearCatalogSearch');
     clearBtn.classList.toggle('show', search.length > 0);
-    const filtered = products.filter(p => p.name.toLowerCase().includes(search) || p.code.includes(search) || (p.description && p.description.toLowerCase().includes(search)) || p.category.toLowerCase().includes(search));
+    const filtered = window.products.filter(p => p.name.toLowerCase().includes(search) || p.code.includes(search) || (p.description && p.description.toLowerCase().includes(search)) || p.category.toLowerCase().includes(search));
     const list = document.getElementById('catalogList');
     document.getElementById('catalogCount').textContent = filtered.length + ' ' + (filtered.length === 1 ? 'produto' : 'produtos') + (search ? ' encontrado' + (filtered.length === 1 ? '' : 's') : ' no total');
     if (filtered.length === 0) {
@@ -2267,7 +2363,7 @@
 
   function renderProducts() {
     const search = document.getElementById('searchProduct').value.toLowerCase();
-    const filtered = products.filter(p => p.name.toLowerCase().includes(search) || p.code.includes(search) || (p.description && p.description.toLowerCase().includes(search)));
+    const filtered = window.products.filter(p => p.name.toLowerCase().includes(search) || p.code.includes(search) || (p.description && p.description.toLowerCase().includes(search)));
     const list = document.getElementById('productList');
     if (filtered.length === 0) { list.innerHTML = '<div class="empty"><div class="empty-icon"></div><div class="empty-text">Nenhum produto encontrado</div></div>'; }
     else {
@@ -2279,8 +2375,8 @@
         return `<div class="product-item">${imgHtml}<div class="product-info"><div class="product-name">${escapeHtml(p.name)}${promoBadge}</div>${descHtml}<div class="product-meta">Cod: ${p.code} • Est: ${p.stock} • ${p.category}</div></div><div class="product-price">R$ ${p.price.toFixed(2)}</div><div class="product-actions"><button class="icon-btn edit" onclick="editProduct(${p.id})">✏️</button><button class="icon-btn delete" onclick="deleteProduct(${p.id})">🗑️</button></div></div>`;
       }).join('');
     }
-    document.getElementById('statProducts').textContent = products.length;
-    document.getElementById('statLowStock').textContent = products.filter(p => p.stock <= 5).length;
+    document.getElementById('statProducts').textContent = window.products.length;
+    document.getElementById('statLowStock').textContent = window.products.filter(p => p.stock <= 5).length;
   }
 
   function openProductModal(product = null) {
@@ -2314,28 +2410,32 @@
     const promoQuantity = promoActive ? parseInt(document.getElementById('productPromoQuantity').value) : 0;
     if (!name || !code || isNaN(price) || isNaN(stock)) { toast('Preencha todos os campos obrigatórios!', 'error'); return; }
     if (promoActive && (isNaN(promoQuantity) || promoQuantity <= 0)) { toast('Informe a quantidade válida para a promoção!', 'error'); return; }
+    
+    let productObj = { id: id ? parseInt(id) : Date.now(), name, description, code, price, stock, category, image: currentImageData, promoActive, promoQuantity };
+
     if (id) {
-      const p = products.find(pr => pr.id === parseInt(id));
-      Object.assign(p, { name, description, code, price, stock, category, image: currentImageData, promoActive, promoQuantity });
-      cart.forEach(item => { if (item.id === p.id) { item.image = currentImageData; item.description = description; item.name = name; item.price = price; } });
       toast('Produto atualizado!', 'success');
     } else {
-      if (products.some(p => p.code === code)) { toast('Código já cadastrado!', 'error'); return; }
-      products.push({ id: Date.now(), name, description, code, price, stock, category, image: currentImageData, promoActive, promoQuantity });
+      if (window.products.some(p => p.code === code)) { toast('Código já cadastrado!', 'error'); return; }
       toast('Produto cadastrado!', 'success');
     }
-    saveProducts(); renderProducts(); closeProductModal();
+    
+    if (window.saveProductFirebase) window.saveProductFirebase(productObj);
+    closeProductModal();
   }
-  function editProduct(id) { const p = products.find(pr => pr.id === id); if (p) openProductModal(p); }
-  function deleteProduct(id) { if (!confirm('Deseja realmente excluir este produto?')) return; products = products.filter(p => p.id !== id); saveProducts(); renderProducts(); toast('Produto excluído', 'success'); }
+  function editProduct(id) { const p = window.products.find(pr => pr.id === id); if (p) openProductModal(p); }
+  function deleteProduct(id) { 
+    if (!confirm('Deseja realmente excluir este produto?')) return; 
+    if (window.deleteProductFirebase) window.deleteProductFirebase(id);
+    toast('Produto excluído', 'success'); 
+  }
   function scanForProduct() { scanMode = 'product'; openInnerView('pdv'); setTimeout(() => startScanner(), 300); }
-  function saveProducts() { try { localStorage.setItem('pdv_products', JSON.stringify(products)); } catch (e) { toast('Armazenamento cheio!', 'error'); } }
 
   function renderClients() {
     const search = (document.getElementById('searchClient').value || '').toLowerCase().trim();
     const clearBtn = document.getElementById('clearClientSearch');
     if (clearBtn) clearBtn.classList.toggle('show', search.length > 0);
-    const filtered = clients.filter(c => c.name.toLowerCase().includes(search) || c.whatsapp.includes(search) || formatWhatsapp(c.whatsapp).includes(search) || (c.neighborhood && c.neighborhood.toLowerCase().includes(search)));
+    const filtered = window.clients.filter(c => c.name.toLowerCase().includes(search) || c.whatsapp.includes(search) || formatWhatsapp(c.whatsapp).includes(search) || (c.neighborhood && c.neighborhood.toLowerCase().includes(search)));
     const list = document.getElementById('clientList');
     if (filtered.length === 0) { list.innerHTML = `<div class="empty"><div class="empty-icon">${search ? '🔍' : '👥'}</div><div class="empty-text">${search ? 'Nenhum cliente encontrado' : 'Nenhum cliente cadastrado'}</div></div>`; }
     else {
@@ -2348,8 +2448,8 @@
         return `<div class="client-item"><div class="client-avatar">${escapeHtml(initials)}</div><div class="client-info"><div class="client-name">${escapeHtml(c.name)}${badgeHtml}</div><div class="client-meta">${whatsappHtml}${addressHtml}</div></div><div class="client-actions"><button class="icon-btn edit" onclick="editClient(${c.id})">✏️</button><button class="icon-btn delete" onclick="deleteClient(${c.id})">🗑️</button></div></div>`;
       }).join('');
     }
-    document.getElementById('statClients').textContent = clients.length;
-    document.getElementById('statDelivery').textContent = clients.filter(c => c.delivery).length;
+    document.getElementById('statClients').textContent = window.clients.length;
+    document.getElementById('statDelivery').textContent = window.clients.filter(c => c.delivery).length;
   }
   function clearClientSearch() { document.getElementById('searchClient').value = ''; renderClients(); document.getElementById('searchClient').focus(); }
 
@@ -2390,22 +2490,36 @@
     if (whatsapp.length > 0 && (whatsapp.length < 10 || whatsapp.length > 11)) { toast('WhatsApp inválido!', 'error'); return; }
     if (delivery && (!address || !neighborhood)) { toast('Preencha endereço e bairro!', 'error'); return; }
     if (whatsapp.length > 0) {
-      const duplicate = clients.find(c => c.whatsapp === whatsapp && String(c.id) !== String(id));
+      const duplicate = window.clients.find(c => c.whatsapp === whatsapp && String(c.id) !== String(id));
       if (duplicate) { toast('Já existe cliente com este WhatsApp!', 'error'); return; }
     }
+
+    let clientObj = {
+      id: id ? parseInt(id) : Date.now(),
+      name,
+      whatsapp,
+      delivery,
+      address: delivery ? address : '',
+      neighborhood: delivery ? neighborhood : '',
+      createdAt: new Date().toISOString(),
+      promoProgress: id ? (window.clients.find(cl => cl.id === parseInt(id))?.promoProgress || {}) : {}
+    };
+
     if (id) {
-      const c = clients.find(cl => cl.id === parseInt(id));
-      Object.assign(c, { name, whatsapp, delivery, address, neighborhood });
       toast('Cliente atualizado!', 'success');
     } else {
-      clients.push({ id: Date.now(), name, whatsapp, delivery, address: delivery ? address : '', neighborhood: delivery ? neighborhood : '', createdAt: new Date().toISOString(), promoProgress: {} });
       toast('Cliente cadastrado!', 'success');
     }
-    saveClients(); renderClients(); closeClientModal();
+
+    if (window.saveClientFirebase) window.saveClientFirebase(clientObj);
+    closeClientModal();
   }
-  function editClient(id) { const c = clients.find(cl => cl.id === id); if (c) openClientModal(c); }
-  function deleteClient(id) { if (!confirm('Deseja realmente excluir este cliente?')) return; clients = clients.filter(c => c.id !== id); saveClients(); renderClients(); toast('Cliente excluído', 'success'); }
-  function saveClients() { try { localStorage.setItem('pdv_clients', JSON.stringify(clients)); } catch (e) { toast('Erro ao salvar', 'error'); } }
+  function editClient(id) { const c = window.clients.find(cl => cl.id === id); if (c) openClientModal(c); }
+  function deleteClient(id) { 
+    if (!confirm('Deseja realmente excluir este cliente?')) return; 
+    if (window.deleteClientFirebase) window.deleteClientFirebase(id);
+    toast('Cliente excluído', 'success'); 
+  }
   document.getElementById('clientWhatsapp').addEventListener('input', (e) => { const input = e.target; input.value = input.value.replace(/\D/g, '').slice(0, 11); });
 
   function renderSales() {
@@ -2418,9 +2532,9 @@
 
     const deleteMode = search.includes('deletar');
 
-    let filtered = sales;
+    let filtered = window.sales;
     if (!deleteMode && search) {
-      filtered = sales.filter(s => {
+      filtered = window.sales.filter(s => {
         const clientName = s.client ? (s.client.name || '').toLowerCase() : '';
         const itemsMatch = s.items.some(i => (i.name || '').toLowerCase().includes(search));
         const idMatch = String(s.id).includes(search);
@@ -2455,8 +2569,8 @@
         return `<div class="sale-item"><div class="sale-header"><div><div class="sale-id">Venda #${String(s.id).slice(-6)}</div><div class="sale-date">${dateStr}</div></div><div class="sale-total-wrap"><div class="sale-total">R$ ${s.total.toFixed(2)}</div>${deleteBtn}</div></div><div class="sale-items-list">${itemsChips}</div>${clientHtml}</div>`;
       }).join('');
     }
-    document.getElementById('statSales').textContent = sales.length;
-    const revenue = sales.reduce((s, sale) => s + sale.total, 0);
+    document.getElementById('statSales').textContent = window.sales.length;
+    const revenue = window.sales.reduce((s, sale) => s + sale.total, 0);
     document.getElementById('statRevenue').textContent = 'R$ ' + revenue.toFixed(0);
   }
 
@@ -2467,12 +2581,10 @@
   }
 
   function deleteSale(id) {
-    const sale = sales.find(s => s.id === id);
+    const sale = window.sales.find(s => s.id === id);
     if (!sale) return;
     if (!confirm(`Deseja realmente deletar a venda #${String(id).slice(-6)} (R$ ${sale.total.toFixed(2)})?`)) return;
-    sales = sales.filter(s => s.id !== id);
-    localStorage.setItem('pdv_sales', JSON.stringify(sales));
-    renderSales();
+    if (window.deleteSaleFirebase) window.deleteSaleFirebase(id);
     toast('Venda deletada!', 'success');
   }
 
