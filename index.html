@@ -974,7 +974,7 @@
     display: flex; align-items: center; gap: 6px;
     background: var(--bg-dark); padding: 4px 8px; border-radius: 6px; font-size: 11px; max-width: 100%;
   }
-  .sale-item-chip img { width: 20px; height: 20px; border-radius: 4px; object-fit: cover; }
+  .sale-item-chip img, .sale-item-chip video { width: 20px; height: 20px; border-radius: 4px; object-fit: cover; }
   .sale-item-chip-text { display: flex; flex-direction: column; line-height: 1.2; }
   .sale-item-chip-name { font-weight: 600; color: var(--text-white); }
   .sale-item-chip-desc { font-size: 10px; color: var(--text-muted); font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
@@ -1052,7 +1052,7 @@
     </div>
   </div>
 
-  <!-- AUTH VIEW -->
+  <!-- AUTH VIEW (LOGIN APENAS COM EMAIL, SENHA E BOTAO ENTRAR) -->
   <div class="auth-view" id="authView">
     <div class="auth-header">
       <div class="logo-icon" style="margin: 0 auto 12px;">
@@ -1083,7 +1083,6 @@
 
       <div style="display:flex; flex-direction:column; gap:10px; margin-top: 16px;">
         <button class="btn btn-primary" onclick="handleLogin()">🔑 Entrar</button>
-        <button class="btn btn-outline" onclick="handleRegister()">📝 Criar Nova Conta</button>
       </div>
     </div>
   </div>
@@ -1717,34 +1716,13 @@
 
 </div>
 
-<!-- Firebase SDKs e Nova Regra do Firestore Segura (Explicada em Comentário para o seu painel do Firebase) -->
+<!-- Firebase SDKs -->
 <script type="module">
-  /* 
-    ========================================================================================
-    COPIE E COLE ESTA NOVA REGRA ABAIXO NO SEU PAINEL DO FIREBASE (Firestore Database -> Rules):
-    ========================================================================================
-    
-    rules_version = '2';
-    service cloud.firestore {
-      match /databases/{database}/documents {
-        // Regra segura contra invasões e fraudes: 
-        // Apenas usuários autenticados (com login válido) podem ler e gravar dados.
-        // Sem restrição de tempo de expiração.
-        // Sem restrição de tipo de conteúdo de fotos ou vídeos.
-        match /{document=**} {
-          allow read, write: if request.auth != null;
-        }
-      }
-    }
-    ========================================================================================
-  */
-
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
   import { 
     getAuth, 
     signInWithEmailAndPassword, 
-    createUserWithEmailAndPassword, 
     signOut, 
     onAuthStateChanged 
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -1794,29 +1772,6 @@
       })
       .catch((error) => {
         toast('Erro no login: ' + error.message, 'error');
-      });
-  };
-
-  window.handleRegister = function() {
-    const email = document.getElementById('authEmail').value.trim();
-    const password = document.getElementById('authPassword').value;
-
-    if (!email || !password) {
-      toast('Preencha e-mail e senha!', 'error');
-      return;
-    }
-
-    if (password.length < 6) {
-      toast('A senha deve ter no mínimo 6 caracteres!', 'error');
-      return;
-    }
-
-    createUserWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        toast('Conta criada com sucesso!', 'success');
-      })
-      .catch((error) => {
-        toast('Erro ao cadastrar: ' + error.message, 'error');
       });
   };
 
