@@ -72,15 +72,30 @@
     .phone-frame::-webkit-scrollbar { width: 0; }
   }
 
-  /* STATUS BAR (OCULTADO CONFORME SOLICITADO) */
   .status-bar {
     display: none;
+  }
+
+  /* LOGIN VIEW */
+  .auth-view {
+    padding: 30px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  .auth-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .auth-header .logo-icon {
+    margin: 0 auto 16px;
   }
 
   /* HOME VIEW */
   .home-view {
     padding: 20px 24px 100px;
-    display: flex;
+    display: none;
     flex-direction: column;
     min-height: calc(100vh - 40px);
   }
@@ -238,7 +253,7 @@
     width: 100%;
     max-width: 430px;
     background: var(--bg-dark);
-    display: flex;
+    display: none;
     justify-content: space-around;
     align-items: center;
     padding: 12px 20px 20px;
@@ -265,7 +280,6 @@
   .nav-btn:active { transform: scale(0.9); }
   .nav-btn svg { width: 28px; height: 28px; }
 
-  /* ============ BOTÃO PDV CENTRAL NA BARRA INFERIOR ============ */
   .nav-btn-pdv {
     width: 58px;
     height: 58px;
@@ -289,7 +303,6 @@
     box-shadow: 0 3px 10px rgba(245,166,35,0.6), 0 0 0 5px var(--bg-dark);
   }
 
-  /* ============ INNER VIEWS (PDV, CATÁLOGO, ETC) ============ */
   .inner-view {
     display: none;
     padding: 0 0 100px;
@@ -310,7 +323,6 @@
     z-index: 50;
   }
   
-  /* BOTÃO PDV NO CATÁLOGO - OCULTO CONFORME SOLICITADO */
   .btn-pdv-nav {
     display: none;
   }
@@ -340,7 +352,6 @@
     padding: 16px 20px;
   }
 
-  /* CARD (dark theme) */
   .card {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -358,7 +369,6 @@
     color: var(--text-white);
   }
 
-  /* SCANNER */
   #reader {
     width: 100%;
     aspect-ratio: 16 / 9;
@@ -373,7 +383,6 @@
     object-fit: cover;
   }
 
-  /* INPUTS */
   .input-group { margin-bottom: 12px; }
   .input-group label {
     display: block;
@@ -416,7 +425,6 @@
   .char-counter.warn { color: var(--warning); }
   .char-counter.danger { color: var(--danger); }
 
-  /* BUTTONS */
   .btn {
     width: 100%;
     padding: 14px;
@@ -451,7 +459,6 @@
     border: 1px solid var(--border);
   }
 
-  /* ============ BOTÃO FINALIZAR VENDA COM 3CM DE ALTURA ============ */
   .btn-finalizar-venda {
     height: 3cm;
     min-height: 3cm;
@@ -465,7 +472,6 @@
     }
   }
 
-  /* IMAGE UPLOAD */
   .image-upload {
     display: flex;
     flex-direction: column;
@@ -530,7 +536,6 @@
     box-shadow: var(--shadow);
   }
 
-  /* WHATSAPP INPUT */
   .whatsapp-input-wrap {
     display: flex;
     align-items: stretch;
@@ -565,7 +570,6 @@
   }
   .whatsapp-input-wrap input:focus { box-shadow: none; }
 
-  /* TOGGLE SWITCH */
   .toggle-row {
     display: flex;
     align-items: center;
@@ -635,11 +639,9 @@
   .toggle-switch input:checked + .toggle-slider { background: var(--accent-orange); }
   .toggle-switch input:checked + .toggle-slider::before { transform: translateX(20px); }
 
-  /* ADDRESS FIELDS */
   .address-fields { display: none; animation: slideIn 0.3s ease; }
   .address-fields.show { display: block; }
 
-  /* CART */
   .cart-item {
     display: flex;
     justify-content: space-between;
@@ -675,7 +677,6 @@
   .qty-btn:active { transform: scale(0.9); }
   .qty-value { min-width: 24px; text-align: center; font-weight: 600; color: var(--text-white); }
 
-  /* TOTAL */
   .total-box {
     background: linear-gradient(135deg, var(--accent-orange) 0%, var(--accent-orange-dark) 100%);
     color: #1a1a1a;
@@ -688,7 +689,6 @@
   .total-value { font-size: 32px; font-weight: 900; margin-top: 4px; }
   .total-items { font-size: 13px; opacity: 0.8; margin-top: 4px; font-weight: 600; }
 
-  /* PAYMENT METHODS */
   .payment-methods {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -720,7 +720,6 @@
   .pay-btn.card { border-color: #f59e0b; color: #f59e0b; }
   .pay-btn.card:active, .pay-btn.card.active { background: rgba(245, 158, 11, 0.1); }
 
-  /* PRODUCT LIST */
   .product-item {
     display: flex; align-items: center; padding: 12px;
     background: var(--bg-card); border: 1px solid var(--border);
@@ -749,7 +748,6 @@
   .icon-btn.edit { background: rgba(99,102,241,0.2); color: #818cf8; }
   .icon-btn.delete { background: rgba(239,68,68,0.2); color: var(--danger); }
 
-  /* CLIENT LIST */
   .client-item {
     background: var(--bg-card); border: 1px solid var(--border);
     padding: 14px; border-radius: var(--radius-sm); margin-bottom: 8px;
@@ -775,7 +773,6 @@
   .client-meta-row { display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .client-actions { display: flex; gap: 6px; flex-shrink: 0; }
 
-  /* CATALOG GRID */
   .catalog-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
   .catalog-count { font-size: 13px; color: var(--text-muted); font-weight: 500; }
   .catalog-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -829,12 +826,10 @@
   .catalog-card-add:active { transform: scale(0.9); }
   .catalog-card-add:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
 
-  /* EMPTY STATE */
   .empty { text-align: center; padding: 40px 20px; color: var(--text-muted); }
   .empty-icon { font-size: 48px; margin-bottom: 12px; }
   .empty-text { font-size: 14px; }
 
-  /* SIDE MENU DRAWER */
   .menu-overlay {
     position: fixed; inset: 0;
     background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
@@ -883,7 +878,6 @@
     text-align: center; font-size: 12px; color: var(--text-muted);
   }
 
-  /* MODAL */
   .modal-overlay {
     position: fixed; inset: 0;
     background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
@@ -905,7 +899,6 @@
   }
   .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: var(--text-white); }
 
-  /* MODAL HEADER ROW */
   .modal-header-row {
     display: flex;
     justify-content: space-between;
@@ -921,7 +914,6 @@
   }
   .modal-icon-btn:active { transform: scale(0.9); background: var(--bg-card-hover); }
 
-  /* APP GRID FOR CARD SETTINGS */
   .app-grid {
     display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px;
   }
@@ -935,7 +927,6 @@
   .app-option .app-icon { font-size: 28px; }
   .app-option .app-name { font-size: 13px; font-weight: 600; }
 
-  /* TOAST */
   .toast {
     position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
     background: var(--bg-card); color: var(--text-white);
@@ -948,7 +939,6 @@
   .toast.success { background: var(--success); color: white; border-color: var(--success); }
   .toast.error { background: var(--danger); color: white; border-color: var(--danger); }
 
-  /* SEARCH */
   .search-box { position: relative; margin-bottom: 14px; }
   .search-box input { padding-left: 40px; padding-right: 36px; }
   .search-icon {
@@ -963,7 +953,6 @@
   }
   .search-clear.show { display: flex; }
 
-  /* STATS */
   .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
   .stat-card {
     background: var(--bg-card); border: 1px solid var(--border);
@@ -972,7 +961,6 @@
   .stat-value { font-size: 20px; font-weight: 800; color: var(--accent-orange); }
   .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 
-  /* SALE HISTORY */
   .sale-item {
     background: var(--bg-card); border: 1px solid var(--border);
     padding: 14px; border-radius: var(--radius-sm); margin-bottom: 8px;
@@ -991,7 +979,6 @@
   .sale-item-chip-name { font-weight: 600; color: var(--text-white); }
   .sale-item-chip-desc { font-size: 10px; color: var(--text-muted); font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
 
-  /* ============ NOVO: BOTÃO DELETAR EM MODO BUSCA ============ */
   .delete-inline-btn {
     display: inline-flex;
     align-items: center;
@@ -1031,7 +1018,6 @@
     animation: fadeIn 0.25s ease;
   }
 
-  /* PROMO WIN MODAL */
   .promo-win-content { text-align: center; padding: 10px 0; }
   .promo-win-img {
     width: 120px; height: 120px; border-radius: 16px; object-fit: cover;
@@ -1057,13 +1043,48 @@
 
 <div class="phone-frame">
 
-  <!-- STATUS BAR (OCULTADO VIA CSS) -->
   <div class="status-bar">
     <span id="statusTime">10:24</span>
     <div class="status-bar-icons">
       <svg width="16" height="12" viewBox="0 0 16 12" fill="white"><rect x="0" y="8" width="3" height="4" rx="0.5"/><rect x="4.5" y="5" width="3" height="7" rx="0.5"/><rect x="9" y="2" width="3" height="10" rx="0.5"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" opacity="0.3"/></svg>
       <svg width="16" height="12" viewBox="0 0 16 12" fill="white"><path d="M8 2C10.5 2 12.7 3 14.3 4.6L15.7 3.2C13.7 1.2 11 0 8 0S2.3 1.2 0.3 3.2L1.7 4.6C3.3 3 5.5 2 8 2ZM8 6C9.4 6 10.7 6.5 11.7 7.4L13.1 6C11.7 4.7 9.9 4 8 4S4.3 4.7 2.9 6L4.3 7.4C5.3 6.5 6.6 6 8 6ZM8 10C8.6 10 9.1 9.8 9.5 9.4L8 7.9L6.5 9.4C6.9 9.8 7.4 10 8 10Z"/></svg>
       <svg width="24" height="12" viewBox="0 0 24 12" fill="white"><rect x="0" y="1" width="20" height="10" rx="2" fill="none" stroke="white" stroke-width="1"/><rect x="21" y="4" width="2" height="4" rx="0.5"/><rect x="2" y="3" width="16" height="6" rx="1"/></svg>
+    </div>
+  </div>
+
+  <!-- AUTH VIEW -->
+  <div class="auth-view" id="authView">
+    <div class="auth-header">
+      <div class="logo-icon" style="margin: 0 auto 12px;">
+        <svg viewBox="0 0 40 40" fill="none">
+          <path d="M8 12L12 12L16 28L30 28L34 16H14" stroke="#f5a623" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="16" cy="32" r="3" fill="#f5a623"/>
+          <circle cx="28" cy="32" r="3" fill="#f5a623"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="pdv">GORDO</span>
+        <span class="smart">EXPRESS</span>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-title">🔐 Acesso ao Sistema</div>
+      
+      <div class="input-group">
+        <label>E-mail *</label>
+        <input type="email" id="authEmail" placeholder="seuemail@exemplo.com" autocomplete="email">
+      </div>
+
+      <div class="input-group">
+        <label>Senha *</label>
+        <input type="password" id="authPassword" placeholder="******" autocomplete="current-password">
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:10px; margin-top: 16px;">
+        <button class="btn btn-primary" onclick="handleLogin()">🔑 Entrar</button>
+        <button class="btn btn-outline" onclick="handleRegister()">📝 Criar Nova Conta</button>
+      </div>
     </div>
   </div>
 
@@ -1142,7 +1163,7 @@
     </div>
   </div>
 
-  <!-- INNER VIEW: PDV (REORDENADO CONFORME SOLICITADO) -->
+  <!-- INNER VIEW: PDV -->
   <div class="inner-view" id="viewPDV">
     <div class="inner-header">
       <button class="back-btn" onclick="goHome()">←</button>
@@ -1150,7 +1171,6 @@
     </div>
     <div class="inner-content">
 
-      <!-- 1. Código de Barras (Input) - AGORA NO TOPO -->
       <div class="card">
         <div class="card-title">⌨️ Ou digite o código</div>
         <div style="display:flex; gap:8px;">
@@ -1159,7 +1179,6 @@
         </div>
       </div>
 
-      <!-- 2. Cliente da Venda -->
       <div class="card">
         <div class="card-title">👤 Cliente da Venda</div>
         <div id="selectedClientDisplay" style="display:none; padding: 12px; background: rgba(245,166,35,0.1); border-radius: var(--radius-sm); margin-bottom: 12px; border: 1.5px solid var(--accent-orange);">
@@ -1169,20 +1188,17 @@
         <button class="btn btn-outline" onclick="openClientSelectionModal()">👤 Selecionar ou Buscar Cliente</button>
       </div>
 
-      <!-- 3. Carrinho -->
       <div class="card">
         <div class="card-title">🛍️ Carrinho</div>
         <div id="cartList"></div>
       </div>
 
-      <!-- 4. Total -->
       <div class="total-box">
         <div class="total-label">Total a pagar</div>
         <div class="total-value" id="cartTotal">R$ 0,00</div>
         <div class="total-items" id="cartCount">0 itens</div>
       </div>
 
-      <!-- 5. Métodos de Pagamento -->
       <div class="payment-methods">
         <button class="pay-btn cash" onclick="openCashModal()">
           <span class="pay-icon">💵</span>
@@ -1198,10 +1214,8 @@
         </button>
       </div>
 
-      <!-- 6. Finalizar Venda - BOTÃO COM 3CM DE ALTURA -->
       <button class="btn btn-success btn-finalizar-venda" onclick="finalizeSale()">✅ Finalizar Venda</button>
 
-      <!-- 7. Scanner de Código de Barras - AGORA ABAIXO DE FINALIZAR VENDA -->
       <div class="card" style="margin-top: 14px;">
         <div class="card-title">📷 Scanner de Código de Barras</div>
         <div id="reader"></div>
@@ -1214,12 +1228,11 @@
     </div>
   </div>
 
-  <!-- INNER VIEW: CATÁLOGO (BOTÃO PDV SUPERIOR OCULTO) -->
+  <!-- INNER VIEW: CATÁLOGO -->
   <div class="inner-view" id="viewCatalog">
     <div class="inner-header">
       <button class="back-btn" onclick="goHome()">←</button>
       <span class="inner-title">Catálogo</span>
-      <!-- Botão PDV do cabeçalho OCULTO via CSS (.btn-pdv-nav { display: none; }) -->
       <button class="btn-pdv-nav" onclick="openInnerView('pdv')">
         <svg viewBox="0 0 44 44" fill="none">
           <path d="M10 14L14 14L18 30L32 30L36 18H16" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1286,7 +1299,6 @@
         </div>
       </div>
 
-      <!-- NOVO: BUSCA DE VENDAS -->
       <div class="search-box">
         <span class="search-icon">🔍</span>
         <input type="text" id="searchSale" placeholder="Buscar venda... (digite Deletar)" oninput="renderSales()">
@@ -1343,14 +1355,13 @@
     </div>
   </div>
 
-  <!-- BOTTOM NAV - COM PDV CENTRAL -->
-  <div class="bottom-nav">
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav" id="bottomNav">
     <button class="nav-btn" onclick="goHome()" title="Início">
       <svg viewBox="0 0 28 28" fill="white">
         <path d="M14 3L3 12V24C3 24.6 3.4 25 4 25H10V18C10 17.4 10.4 17 11 17H17C17.6 17 18 17.4 18 18V25H24C24.6 25 25 24.6 25 24V12L14 3Z"/>
       </svg>
     </button>
-    <!-- BOTÃO PDV CENTRAL (MANTIDO) -->
     <button class="nav-btn nav-btn-pdv" onclick="openInnerView('pdv')" title="PDV">
       <svg viewBox="0 0 44 44" fill="none">
         <path d="M10 14L14 14L18 30L32 30L36 18H16" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1394,7 +1405,7 @@
       </button>
       <div class="menu-divider"></div>
       <button class="menu-item" onclick="navigateTo('viewClients')">
-        <div class="menu-item-icon"></div>
+        <div class="menu-item-icon">👤</div>
         <div class="menu-item-content">
           <div class="menu-item-title">Clientes</div>
           <div class="menu-item-desc">Cadastro e gerenciamento</div>
@@ -1407,6 +1418,15 @@
         <div class="menu-item-content">
           <div class="menu-item-title">Promoção Ativa</div>
           <div class="menu-item-desc">Clientes em promoções</div>
+        </div>
+        <span class="menu-item-arrow">›</span>
+      </button>
+      <div class="menu-divider"></div>
+      <button class="menu-item" onclick="handleLogout()">
+        <div class="menu-item-icon">🚪</div>
+        <div class="menu-item-content">
+          <div class="menu-item-title" style="color: var(--danger);">Sair da Conta</div>
+          <div class="menu-item-desc">Fazer logout</div>
         </div>
         <span class="menu-item-arrow">›</span>
       </button>
@@ -1426,14 +1446,14 @@
         <label class="image-upload" id="imageUploadBox" for="productImage">
           <div class="image-upload-placeholder" id="imagePlaceholder">
             <span class="icon">📸</span>
-            <span class="text">Toque para escolher uma imagem</span>
+            <span class="text">Toque para escolher uma imagem ou vídeo</span>
             <span class="hint">Da galeria ou memória do celular</span>
           </div>
           <img id="imagePreview" class="image-upload-preview" style="display:none;" alt="Preview">
           <div class="image-upload-actions" id="imageActions" style="display:none;">
-            <button type="button" class="image-action-btn" onclick="removeImage(event)" title="Remover foto">🗑️</button>
+            <button type="button" class="image-action-btn" onclick="removeImage(event)" title="Remover mídia">🗑️</button>
           </div>
-          <input type="file" id="productImage" accept="image/*" onchange="handleImageUpload(event)">
+          <input type="file" id="productImage" accept="image/*,video/*" onchange="handleImageUpload(event)">
         </label>
       </div>
 
@@ -1588,7 +1608,7 @@
     </div>
   </div>
 
-  <!-- NOVO: MODAL DINHEIRO -->
+  <!-- MODAL DINHEIRO -->
   <div class="modal-overlay" id="cashModal">
     <div class="modal">
       <div class="modal-handle"></div>
@@ -1612,7 +1632,7 @@
     </div>
   </div>
 
-  <!-- NOVO: MODAL PIX -->
+  <!-- MODAL PIX -->
   <div class="modal-overlay" id="pixModal">
     <div class="modal">
       <div class="modal-handle"></div>
@@ -1620,7 +1640,7 @@
         <div class="modal-title">⚡ Pagamento via Pix</div>
         <button class="modal-icon-btn" onclick="document.getElementById('pixQrInput').click()" title="Alterar QR Code">📷</button>
       </div>
-      <input type="file" id="pixQrInput" accept="image/*" style="display:none" onchange="handlePixUpload(event)">
+      <input type="file" id="pixQrInput" accept="image/*,video/*" style="display:none" onchange="handlePixUpload(event)">
       
       <div id="pixQrContainer" style="text-align: center; padding: 20px 0;">
         <img id="pixQrImage" style="max-width: 250px; width: 100%; border-radius: var(--radius-sm); display: none; margin: 0 auto; box-shadow: var(--shadow-lg);" alt="QR Code Pix">
@@ -1634,7 +1654,7 @@
     </div>
   </div>
 
-  <!-- NOVO: MODAL CARTÃO -->
+  <!-- MODAL CARTÃO -->
   <div class="modal-overlay" id="cardModal">
     <div class="modal">
       <div class="modal-handle"></div>
@@ -1655,7 +1675,7 @@
     </div>
   </div>
 
-  <!-- NOVO: MODAL CONFIGURAÇÕES DO CARTÃO -->
+  <!-- MODAL CONFIGURAÇÕES DO CARTÃO -->
   <div class="modal-overlay" id="cardSettingsModal">
     <div class="modal">
       <div class="modal-handle"></div>
@@ -1697,8 +1717,118 @@
 
 </div>
 
+<!-- Firebase SDKs e Nova Regra do Firestore Segura (Explicada em Comentário para o seu painel do Firebase) -->
+<script type="module">
+  /* 
+    ========================================================================================
+    COPIE E COLE ESTA NOVA REGRA ABAIXO NO SEU PAINEL DO FIREBASE (Firestore Database -> Rules):
+    ========================================================================================
+    
+    rules_version = '2';
+    service cloud.firestore {
+      match /databases/{database}/documents {
+        // Regra segura contra invasões e fraudes: 
+        // Apenas usuários autenticados (com login válido) podem ler e gravar dados.
+        // Sem restrição de tempo de expiração.
+        // Sem restrição de tipo de conteúdo de fotos ou vídeos.
+        match /{document=**} {
+          allow read, write: if request.auth != null;
+        }
+      }
+    }
+    ========================================================================================
+  */
+
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
+  import { 
+    getAuth, 
+    signInWithEmailAndPassword, 
+    createUserWithEmailAndPassword, 
+    signOut, 
+    onAuthStateChanged 
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAsKXYlMx27-BeE5yBkifhyjcMT4u6iL9o",
+    authDomain: "gordo-express.firebaseapp.com",
+    projectId: "gordo-express",
+    storageBucket: "gordo-express.firebasestorage.app",
+    messagingSenderId: "277784561308",
+    appId: "1:277784561308:web:93c1bbee9d7d6728c3cf59",
+    measurementId: "G-NM6XSMBGEV"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const auth = getAuth(app);
+
+  window.firebaseAuth = auth;
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      document.getElementById('authView').style.display = 'none';
+      document.getElementById('homeView').style.display = 'flex';
+      document.getElementById('bottomNav').style.display = 'flex';
+      toast('Sessão iniciada com segurança!', 'success');
+    } else {
+      document.getElementById('authView').style.display = 'flex';
+      document.getElementById('homeView').style.display = 'none';
+      document.getElementById('bottomNav').style.display = 'none';
+      document.querySelectorAll('.inner-view').forEach(v => v.classList.remove('active'));
+    }
+  });
+
+  window.handleLogin = function() {
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+
+    if (!email || !password) {
+      toast('Preencha e-mail e senha!', 'error');
+      return;
+    }
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        toast('Login realizado com sucesso!', 'success');
+      })
+      .catch((error) => {
+        toast('Erro no login: ' + error.message, 'error');
+      });
+  };
+
+  window.handleRegister = function() {
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+
+    if (!email || !password) {
+      toast('Preencha e-mail e senha!', 'error');
+      return;
+    }
+
+    if (password.length < 6) {
+      toast('A senha deve ter no mínimo 6 caracteres!', 'error');
+      return;
+    }
+
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        toast('Conta criada com sucesso!', 'success');
+      })
+      .catch((error) => {
+        toast('Erro ao cadastrar: ' + error.message, 'error');
+      });
+  };
+
+  window.handleLogout = function() {
+    signOut(auth).then(() => {
+      closeMenu();
+      toast('Você saiu do sistema!', 'success');
+    });
+  };
+</script>
+
 <script>
-  // ============ STATE ============
   let products = JSON.parse(localStorage.getItem('pdv_products') || '[]');
   let cart = [];
   let sales = JSON.parse(localStorage.getItem('pdv_sales') || '[]');
@@ -1725,7 +1855,6 @@
     saveProducts();
   }
 
-  // Update time
   function updateTime() {
     const now = new Date();
     const h = String(now.getHours()).padStart(2,'0');
@@ -1735,7 +1864,6 @@
   updateTime();
   setInterval(updateTime, 30000);
 
-  // ============ NAVIGATION ============
   function openInnerView(viewName) {
     document.getElementById('homeView').style.display = 'none';
     document.querySelectorAll('.inner-view').forEach(v => v.classList.remove('active'));
@@ -1771,7 +1899,6 @@
     if (viewId === 'viewPromos') renderPromos();
   }
 
-  // ============ MENU ============
   function openMenu() {
     document.getElementById('menuOverlay').classList.add('active');
     document.getElementById('menuDrawer').classList.add('active');
@@ -1781,7 +1908,6 @@
     document.getElementById('menuDrawer').classList.remove('active');
   }
 
-  // ============ TOAST ============
   function toast(msg, type = '') {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -1789,7 +1915,6 @@
     setTimeout(() => t.classList.remove('show'), 2500);
   }
 
-  // ============ SCAN BEEP SOUND (Bip agudo e alto) ============
   function playScanBeep() {
     try {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -1803,7 +1928,6 @@
       
       osc.type = 'square';
       osc.frequency.setValueAtTime(1500, ctx.currentTime);
-      
       gain.gain.setValueAtTime(0.4, ctx.currentTime);
       
       osc.start();
@@ -1813,7 +1937,6 @@
     }
   }
 
-  // ============ SCANNER ============
   async function startScanner() {
     if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
     try {
@@ -1859,44 +1982,33 @@
   document.getElementById('btnStartScan').addEventListener('click', () => { scanMode = 'cart'; startScanner(); });
   document.getElementById('btnStopScan').addEventListener('click', stopScanner);
 
-  // ============ IMAGE UPLOAD ============
   function handleImageUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
-    if (!file.type.startsWith('image/')) { toast('Selecione uma imagem válida', 'error'); return; }
     const reader = new FileReader();
     reader.onload = (e) => {
-      compressImage(e.target.result, 400, 0.75, (compressedData) => {
-        currentImageData = compressedData;
-        showImagePreview(compressedData);
-      });
+      currentImageData = e.target.result;
+      showImagePreview(e.target.result, file.type.startsWith('video/'));
     };
     reader.readAsDataURL(file);
   }
-  function compressImage(dataUrl, maxSize, quality, callback) {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      let { width, height } = img;
-      if (width > height) { if (width > maxSize) { height = (height * maxSize) / width; width = maxSize; } }
-      else { if (height > maxSize) { width = (width * maxSize) / height; height = maxSize; } }
-      canvas.width = width; canvas.height = height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, width, height);
-      callback(canvas.toDataURL('image/jpeg', quality));
-    };
-    img.src = dataUrl;
-  }
-  function showImagePreview(src) {
-    document.getElementById('imagePreview').src = src;
+
+  function showImagePreview(src, isVideo = false) {
+    const preview = document.getElementById('imagePreview');
+    if (isVideo) {
+      preview.outerHTML = `<video id="imagePreview" class="image-upload-preview" controls src="${src}"></video>`;
+    } else {
+      preview.outerHTML = `<img id="imagePreview" class="image-upload-preview" src="${src}" alt="Preview">`;
+    }
     document.getElementById('imagePreview').style.display = 'block';
     document.getElementById('imagePlaceholder').style.display = 'none';
     document.getElementById('imageActions').style.display = 'flex';
     document.getElementById('imageUploadBox').classList.add('has-image');
   }
+
   function clearImagePreview() {
-    document.getElementById('imagePreview').src = '';
-    document.getElementById('imagePreview').style.display = 'none';
+    const preview = document.getElementById('imagePreview');
+    if (preview) preview.outerHTML = `<img id="imagePreview" class="image-upload-preview" style="display:none;" alt="Preview">`;
     document.getElementById('imagePlaceholder').style.display = 'flex';
     document.getElementById('imageActions').style.display = 'none';
     document.getElementById('imageUploadBox').classList.remove('has-image');
@@ -1906,7 +2018,7 @@
   function removeImage(event) {
     event.preventDefault(); event.stopPropagation();
     clearImagePreview();
-    toast('Foto removida');
+    toast('Mídia removida');
   }
 
   function updateDescCounter() {
@@ -1919,7 +2031,6 @@
     else if (len >= 160) counter.classList.add('warn');
   }
 
-  // ============ CART ============
   function addByCode() {
     const code = document.getElementById('manualCode').value.trim();
     if (!code) return;
@@ -1956,7 +2067,8 @@
       list.innerHTML = '<div class="empty"><div class="empty-icon">🛒</div><div class="empty-text">Carrinho vazio<br>Escaneie ou digite um código</div></div>';
     } else {
       list.innerHTML = cart.map(item => {
-        const imgHtml = item.image ? `<img src="${item.image}" class="cart-item-img" alt="">` : `<div class="cart-item-img-placeholder">📦</div>`;
+        const isVid = item.image && item.image.startsWith('data:video');
+        const imgHtml = item.image ? (isVid ? `<video src="${item.image}" class="cart-item-img"></video>` : `<img src="${item.image}" class="cart-item-img" alt="">`) : `<div class="cart-item-img-placeholder">📦</div>`;
         const descHtml = item.description ? `<div class="cart-item-desc">${escapeHtml(item.description)}</div>` : '';
         return `<div class="cart-item">${imgHtml}<div class="cart-item-info"><div class="cart-item-name">${escapeHtml(item.name)}</div>${descHtml}<div class="cart-item-price">R$ ${item.price.toFixed(2)} × ${item.qty} = R$ ${(item.price * item.qty).toFixed(2)}</div></div><div class="qty-controls"><button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button><span class="qty-value">${item.qty}</span><button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button></div></div>`;
       }).join('');
@@ -1967,7 +2079,6 @@
     document.getElementById('cartCount').textContent = count + ' ' + (count === 1 ? 'item' : 'itens');
   }
 
-  // ============ FINALIZAR VENDA ============
   function finalizeSale() {
     if (cart.length === 0) { toast('Carrinho vazio!', 'error'); return; }
     const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
@@ -2029,12 +2140,12 @@
     const imgContainer = document.getElementById('promoWinImageContainer');
     document.getElementById('promoWinClientName').textContent = `Cliente: ${clientName}`;
     document.getElementById('promoWinDesc').innerHTML = `Você completou <strong>${requiredQty} unidades</strong> de:<br><strong>${escapeHtml(product.name)}</strong>`;
-    imgContainer.innerHTML = product.image ? `<img src="${product.image}" class="promo-win-img" alt="">` : `<div class="promo-win-img-placeholder">📦</div>`;
+    const isVid = product.image && product.image.startsWith('data:video');
+    imgContainer.innerHTML = product.image ? (isVid ? `<video src="${product.image}" class="promo-win-img" controls></video>` : `<img src="${product.image}" class="promo-win-img" alt="">`) : `<div class="promo-win-img-placeholder">📦</div>`;
     document.getElementById('promoWinModal').classList.add('active');
   }
   function closePromoWinModal() { document.getElementById('promoWinModal').classList.remove('active'); }
 
-  // ============ CLIENTE SELEÇÃO ============
   function openClientSelectionModal() {
     document.getElementById('clientSelectionModal').classList.add('active');
     document.getElementById('searchClientSelection').value = '';
@@ -2079,7 +2190,6 @@
     } else { display.style.display = 'none'; }
   }
 
-  // ============ PROMOÇÕES ============
   function renderPromos() {
     const searchInput = document.getElementById('searchPromoClient');
     const rawSearch = searchInput ? searchInput.value : '';
@@ -2123,7 +2233,8 @@
       for (const [prodId, count] of Object.entries(c.promoProgress)) {
         const prod = products.find(p => p.id === parseInt(prodId));
         if (prod && prod.promoActive && count > 0) {
-          const imgHtml = prod.image ? `<img src="${prod.image}" style="width:40px; height:40px; border-radius:8px; object-fit:cover; margin-right:8px;">` : `<div style="width:40px; height:40px; border-radius:8px; background:var(--bg-dark); color:var(--accent-orange); display:flex; align-items:center; justify-content:center; margin-right:8px; font-size:20px;">📦</div>`;
+          const isVid = prod.image && prod.image.startsWith('data:video');
+          const imgHtml = prod.image ? (isVid ? `<video src="${prod.image}" style="width:40px; height:40px; border-radius:8px; object-fit:cover; margin-right:8px;"></video>` : `<img src="${prod.image}" style="width:40px; height:40px; border-radius:8px; object-fit:cover; margin-right:8px;">`) : `<div style="width:40px; height:40px; border-radius:8px; background:var(--bg-dark); color:var(--accent-orange); display:flex; align-items:center; justify-content:center; margin-right:8px; font-size:20px;">📦</div>`;
           const itemDeleteBtn = deleteMode
             ? `<button class="delete-inline-btn" onclick="deletePromoItem(${c.id}, ${prod.id})" title="Deletar promoção deste produto">🗑️</button>`
             : '';
@@ -2170,7 +2281,6 @@
     toast('Promoções do cliente deletadas!', 'success');
   }
 
-  // ============ CATALOG ============
   function renderCatalog() {
     const search = document.getElementById('searchCatalog').value.toLowerCase().trim();
     const clearBtn = document.getElementById('clearCatalogSearch');
@@ -2183,7 +2293,8 @@
       return;
     }
     list.innerHTML = '<div class="catalog-grid">' + filtered.map(p => {
-      const imgHtml = p.image ? `<img src="${p.image}" class="catalog-card-img" alt="">` : `<div class="catalog-card-placeholder"></div>`;
+      const isVid = p.image && p.image.startsWith('data:video');
+      const imgHtml = p.image ? (isVid ? `<video src="${p.image}" class="catalog-card-img" controls></video>` : `<img src="${p.image}" class="catalog-card-img" alt="">`) : `<div class="catalog-card-placeholder"></div>`;
       let stockLabel = '', stockClass = '';
       if (p.stock <= 0) { stockLabel = 'Esgotado'; stockClass = 'out'; }
       else if (p.stock <= 5) { stockLabel = 'Est: ' + p.stock; stockClass = 'low'; }
@@ -2195,12 +2306,10 @@
   }
   function clearCatalogSearch() { document.getElementById('searchCatalog').value = ''; renderCatalog(); document.getElementById('searchCatalog').focus(); }
 
-  // ============ UTILS ============
   function escapeHtml(str) { if (!str) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
   function getInitials(name) { if (!name) return '?'; const parts = name.trim().split(/\s+/); if (parts.length === 1) return parts[0].charAt(0); return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase(); }
   function formatWhatsapp(digits) { if (!digits) return ''; const d = digits.replace(/\D/g, ''); if (d.length === 10) return `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`; else if (d.length === 11) return `(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`; return d; }
 
-  // ============ PRODUCTS ============
   function renderProducts() {
     const search = document.getElementById('searchProduct').value.toLowerCase();
     const filtered = products.filter(p => p.name.toLowerCase().includes(search) || p.code.includes(search) || (p.description && p.description.toLowerCase().includes(search)));
@@ -2208,7 +2317,8 @@
     if (filtered.length === 0) { list.innerHTML = '<div class="empty"><div class="empty-icon"></div><div class="empty-text">Nenhum produto encontrado</div></div>'; }
     else {
       list.innerHTML = filtered.map(p => {
-        const imgHtml = p.image ? `<img src="${p.image}" class="product-img" alt="">` : `<div class="product-icon">📦</div>`;
+        const isVid = p.image && p.image.startsWith('data:video');
+        const imgHtml = p.image ? (isVid ? `<video src="${p.image}" class="product-img"></video>` : `<img src="${p.image}" class="product-img" alt="">`) : `<div class="product-icon">📦</div>`;
         const descHtml = p.description ? `<div class="product-desc">${escapeHtml(p.description)}</div>` : '';
         const promoBadge = p.promoActive ? `<span style="font-size:10px; background:var(--warning); color:#1a1a1a; padding:2px 6px; border-radius:4px; margin-left:6px;">🎁 ${p.promoQuantity}x</span>` : '';
         return `<div class="product-item">${imgHtml}<div class="product-info"><div class="product-name">${escapeHtml(p.name)}${promoBadge}</div>${descHtml}<div class="product-meta">Cod: ${p.code} • Est: ${p.stock} • ${p.category}</div></div><div class="product-price">R$ ${p.price.toFixed(2)}</div><div class="product-actions"><button class="icon-btn edit" onclick="editProduct(${p.id})">✏️</button><button class="icon-btn delete" onclick="deleteProduct(${p.id})">🗑️</button></div></div>`;
@@ -2230,7 +2340,7 @@
     document.getElementById('productPromoActive').checked = product ? !!product.promoActive : false;
     document.getElementById('productPromoQuantity').value = product ? product.promoQuantity : '';
     onPromoToggle(); updateDescCounter();
-    if (product && product.image) { currentImageData = product.image; showImagePreview(product.image); } else { clearImagePreview(); }
+    if (product && product.image) { currentImageData = product.image; showImagePreview(product.image, product.image.startsWith('data:video')); } else { clearImagePreview(); }
     document.getElementById('productModal').classList.add('active');
   }
   function closeProductModal() { document.getElementById('productModal').classList.remove('active'); clearImagePreview(); document.getElementById('productDescription').value = ''; updateDescCounter(); }
@@ -2266,7 +2376,6 @@
   function scanForProduct() { scanMode = 'product'; openInnerView('pdv'); setTimeout(() => startScanner(), 300); }
   function saveProducts() { try { localStorage.setItem('pdv_products', JSON.stringify(products)); } catch (e) { toast('Armazenamento cheio!', 'error'); } }
 
-  // ============ CLIENTES ============
   function renderClients() {
     const search = (document.getElementById('searchClient').value || '').toLowerCase().trim();
     const clearBtn = document.getElementById('clearClientSearch');
@@ -2344,7 +2453,6 @@
   function saveClients() { try { localStorage.setItem('pdv_clients', JSON.stringify(clients)); } catch (e) { toast('Erro ao salvar', 'error'); } }
   document.getElementById('clientWhatsapp').addEventListener('input', (e) => { const input = e.target; input.value = input.value.replace(/\D/g, '').slice(0, 11); });
 
-  // ============ SALES ============
   function renderSales() {
     const list = document.getElementById('salesList');
     const searchInput = document.getElementById('searchSale');
@@ -2378,7 +2486,8 @@
         const d = new Date(s.date);
         const dateStr = d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
         const itemsChips = s.items.map(i => {
-          const imgPart = i.image ? `<img src="${i.image}" alt="">` : '';
+          const isVid = i.image && i.image.startsWith('data:video');
+          const imgPart = i.image ? (isVid ? `<video src="${i.image}"></video>` : `<img src="${i.image}" alt="">`) : '';
           const descPart = i.description ? `<span class="sale-item-chip-desc">${escapeHtml(i.description)}</span>` : '';
           return `<div class="sale-item-chip">${imgPart}<div class="sale-item-chip-text"><span class="sale-item-chip-name">${i.qty}× ${escapeHtml(i.name)}</span>${descPart}</div></div>`;
         }).join('');
@@ -2412,9 +2521,6 @@
     toast('Venda deletada!', 'success');
   }
 
-  // ============ NOVAS FUNÇÕES DE PAGAMENTO ============
-  
-  // Dinheiro
   function openCashModal() {
     const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
     document.getElementById('cashTotalDisplay').textContent = 'R$ ' + total.toFixed(2);
@@ -2438,7 +2544,6 @@
     }
   }
 
-  // Pix
   function openPixModal() {
     loadPixQR();
     document.getElementById('pixModal').classList.add('active');
@@ -2446,14 +2551,23 @@
   function closePixModal() { document.getElementById('pixModal').classList.remove('active'); }
   function loadPixQR() {
     const qr = localStorage.getItem('pdv_pix_qr');
-    const img = document.getElementById('pixQrImage');
+    const container = document.getElementById('pixQrContainer');
     const placeholder = document.getElementById('pixQrPlaceholder');
+    let mediaEl = document.getElementById('pixQrImage');
+    
     if (qr) {
-      img.src = qr;
-      img.style.display = 'block';
+      const isVid = qr.startsWith('data:video');
+      if (isVid && mediaEl.tagName !== 'VIDEO') {
+        mediaEl.outerHTML = `<video id="pixQrImage" style="max-width: 250px; width: 100%; border-radius: var(--radius-sm); margin: 0 auto; box-shadow: var(--shadow-lg);" controls src="${qr}"></video>`;
+      } else if (!isVid && mediaEl.tagName !== 'IMG') {
+        mediaEl.outerHTML = `<img id="pixQrImage" style="max-width: 250px; width: 100%; border-radius: var(--radius-sm); margin: 0 auto; box-shadow: var(--shadow-lg);" src="${qr}" alt="QR Code Pix">`;
+      } else {
+        mediaEl.src = qr;
+      }
+      document.getElementById('pixQrImage').style.display = 'block';
       placeholder.style.display = 'none';
     } else {
-      img.style.display = 'none';
+      mediaEl.style.display = 'none';
       placeholder.style.display = 'flex';
     }
   }
@@ -2462,16 +2576,13 @@
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (e) => {
-      compressImage(e.target.result, 600, 0.8, (compressed) => {
-        localStorage.setItem('pdv_pix_qr', compressed);
-        loadPixQR();
-        toast('QR Code do Pix salvo com sucesso!', 'success');
-      });
+      localStorage.setItem('pdv_pix_qr', e.target.result);
+      loadPixQR();
+      toast('Mídia do Pix salva com sucesso!', 'success');
     };
     reader.readAsDataURL(file);
   }
 
-  // Cartão
   function openCardModal() {
     loadCardApp();
     document.getElementById('cardModal').classList.add('active');
@@ -2518,7 +2629,6 @@
     window.location.href = link;
   }
 
-  // Close modals
   document.getElementById('productModal').addEventListener('click', (e) => { if (e.target.id === 'productModal') closeProductModal(); });
   document.getElementById('clientModal').addEventListener('click', (e) => { if (e.target.id === 'clientModal') closeClientModal(); });
   document.getElementById('clientSelectionModal').addEventListener('click', (e) => { if (e.target.id === 'clientSelectionModal') closeClientSelectionModal(); });
@@ -2532,4 +2642,4 @@
   renderCart();
 </script>
 </body>
-    </html>
+</html>
