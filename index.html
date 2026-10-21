@@ -8,6 +8,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
 <title>Gordo Express</title>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
   :root {
     --bg-dark: #0b0f1a;
@@ -794,6 +795,21 @@
   .promo-win-title { font-size: 20px; font-weight: 800; color: var(--success); margin-bottom: 8px; }
   .promo-win-client { font-size: 16px; font-weight: 600; color: var(--text-white); margin-bottom: 12px; }
   .promo-win-desc { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+
+  /* FINANCEIRO ESTILOS ADICIONAIS */
+  .fin-tab { flex: 1; white-space: nowrap; }
+  .fin-tab.active { background: var(--accent-orange); color: #1a1a1a; border-color: var(--accent-orange); }
+  .fin-history-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+  }
+  .fin-history-item:last-child { border-bottom: none; }
+  .fin-history-info { flex: 1; }
+  .fin-history-title { font-weight: 600; color: var(--text-white); }
+  .fin-history-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .fin-history-value { font-weight: 700; }
+  .fin-history-value.sale { color: var(--success); }
+  .fin-history-value.draw { color: var(--danger); }
 </style>
 </head>
 <body>
@@ -1094,6 +1110,48 @@
     </div>
   </div>
 
+  <!-- INNER VIEW: FINANCEIRO -->
+  <div class="inner-view" id="viewFinance">
+    <div class="inner-header">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <span class="inner-title">Financeiro</span>
+    </div>
+    <div class="inner-content">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="finTotalSales" style="color: var(--success)">R$ 0,00</div>
+          <div class="stat-label">Total Vendas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="finTotalDraws" style="color: var(--danger)">R$ 0,00</div>
+          <div class="stat-label">Total Sangrias</div>
+        </div>
+      </div>
+      <div class="stat-card" style="margin-bottom: 14px; background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-hover) 100%); border-color: var(--accent-orange);">
+        <div class="stat-value" id="finNetBalance" style="color: var(--accent-orange)">R$ 0,00</div>
+        <div class="stat-label">Saldo Líquido (Vendas - Sangrias)</div>
+      </div>
+      
+      <button class="btn btn-danger" onclick="openDrawModal()" style="margin-bottom: 14px;">💸 Registrar Sangria</button>
+      
+      <div style="display: flex; gap: 8px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 4px;">
+        <button class="btn btn-sm btn-dark fin-tab active" onclick="setFinanceTab('daily', this)">Diário</button>
+        <button class="btn btn-sm btn-dark fin-tab" onclick="setFinanceTab('weekly', this)">Semanal</button>
+        <button class="btn btn-sm btn-dark fin-tab" onclick="setFinanceTab('monthly', this)">Mensal</button>
+        <button class="btn btn-sm btn-dark fin-tab" onclick="setFinanceTab('yearly', this)">Anual</button>
+      </div>
+
+      <div class="card" style="padding: 12px;">
+        <canvas id="financeChart" style="max-height: 250px;"></canvas>
+      </div>
+
+      <div class="card" style="margin-top: 14px;">
+        <div class="card-title">📜 Movimentações Recentes</div>
+        <div id="financeHistoryList"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- BOTTOM NAV -->
   <div class="bottom-nav" id="bottomNav">
     <button class="nav-btn" onclick="goHome()" title="Início">
@@ -1157,6 +1215,15 @@
         <div class="menu-item-content">
           <div class="menu-item-title">Promoção Ativa</div>
           <div class="menu-item-desc">Clientes em promoções</div>
+        </div>
+        <span class="menu-item-arrow">›</span>
+      </button>
+      <div class="menu-divider"></div>
+      <button class="menu-item" onclick="navigateTo('viewFinance')">
+        <div class="menu-item-icon">💰</div>
+        <div class="menu-item-content">
+          <div class="menu-item-title">Financeiro</div>
+          <div class="menu-item-desc">Relatórios e sangrias</div>
         </div>
         <span class="menu-item-arrow">›</span>
       </button>
@@ -1448,6 +1515,29 @@
     </div>
   </div>
 
+  <!-- MODAL SANGRIA -->
+  <div class="modal-overlay" id="drawModal">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <div class="modal-header-row">
+        <div class="modal-title">💸 Registrar Sangria</div>
+        <button class="modal-icon-btn" onclick="closeDrawModal()">✕</button>
+      </div>
+      <div class="input-group">
+        <label>Valor da Sangria (R$) *</label>
+        <input type="number" id="drawAmount" placeholder="0,00" step="0.01" min="0">
+      </div>
+      <div class="input-group">
+        <label>Motivo / Observação</label>
+        <textarea id="drawReason" placeholder="Ex: Pagamento de fornecedor, retirada para caixa pequeno..." maxlength="100" rows="2"></textarea>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:8px;">
+        <button class="btn btn-dark" onclick="closeDrawModal()">Cancelar</button>
+        <button class="btn btn-danger" onclick="saveDraw()">💸 Confirmar Sangria</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <audio id="bellSound" preload="auto">
@@ -1521,6 +1611,15 @@
         window.sales.sort((a, b) => b.id - a.id);
         localStorage.setItem('pdv_sales', JSON.stringify(window.sales));
         renderSales();
+        if (document.getElementById('viewFinance').classList.contains('active')) renderFinanceView();
+      });
+
+      onSnapshot(collection(db, "draws"), (snapshot) => {
+        window.draws = [];
+        snapshot.forEach(doc => { window.draws.push(doc.data()); });
+        window.draws.sort((a, b) => new Date(b.date) - new Date(a.date));
+        localStorage.setItem('pdv_draws', JSON.stringify(window.draws));
+        if (document.getElementById('viewFinance').classList.contains('active')) renderFinanceView();
       });
 
     } else {
@@ -1580,6 +1679,11 @@
     if (!window.db) return;
     try { await deleteDoc(doc(window.db, "sales", String(id))); } catch(e) { console.error(e); }
   };
+
+  window.saveDrawFirebase = async function(draw) {
+    if (!window.db) return;
+    try { await setDoc(doc(window.db, "draws", String(draw.id)), draw); } catch(e) { console.error(e); }
+  };
 </script>
 
 <script>
@@ -1587,10 +1691,13 @@
   let cart = [];
   window.sales = JSON.parse(localStorage.getItem('pdv_sales') || '[]');
   window.clients = JSON.parse(localStorage.getItem('pdv_clients') || '[]');
+  window.draws = JSON.parse(localStorage.getItem('pdv_draws') || '[]');
   let html5QrCode = null;
   let scanMode = 'cart';
   let currentImageData = null;
   let currentClient = null;
+  let financeChartInstance = null;
+  let currentFinanceTab = 'daily';
 
   window.products.forEach(p => {
     if (!('description' in p)) p.description = '';
@@ -1606,7 +1713,7 @@
     document.querySelectorAll('.inner-view').forEach(v => v.classList.remove('active'));
     const viewMap = {
       'pdv': 'viewPDV', 'catalog': 'viewCatalog', 'clients': 'viewClients',
-      'sales': 'viewSales', 'promos': 'viewPromos', 'admin': 'viewAdmin'
+      'sales': 'viewSales', 'promos': 'viewPromos', 'admin': 'viewAdmin', 'finance': 'viewFinance'
     };
     const viewId = viewMap[viewName];
     if (viewId) {
@@ -1616,6 +1723,7 @@
       if (viewName === 'sales') renderSales();
       if (viewName === 'clients') renderClients();
       if (viewName === 'promos') renderPromos();
+      if (viewName === 'finance') renderFinanceView();
     }
   }
 
@@ -1634,6 +1742,7 @@
     if (viewId === 'viewSales') renderSales();
     if (viewId === 'viewClients') renderClients();
     if (viewId === 'viewPromos') renderPromos();
+    if (viewId === 'viewFinance') renderFinanceView();
   }
 
   function openMenu() {
@@ -2173,7 +2282,7 @@
     const clientNameStr = s.client && s.client.name ? s.client.name : 'Não informado';
 
     let msg = `🛒 *COMPROVANTE DE COMPRA - GORDO EXPRESS*\n\n`;
-    msg += `None: ${clientNameStr}\n`;
+    msg += `Nome: ${clientNameStr}\n`;
     msg += `WhatsApp: ${formatWhatsapp(rawWhatsapp)}\n`;
     msg += `Número da Venda: #${saleNumberStr}\n`;
     msg += `Data: ${dateStr} Hora: ${timeStr}\n\n`;
@@ -2256,7 +2365,7 @@
           <div class="sale-item">
             <div class="sale-header-info">
               <div class="sale-header-row">
-                <span class="sale-header-label">None:</span>
+                <span class="sale-header-label">Nome:</span>
                 <span class="sale-header-val">${clientNameStr}</span>
               </div>
               <div class="sale-header-row">
@@ -2375,6 +2484,168 @@
     if (!link) return;
     saveCardApp(name, link);
   }
+
+  // ================= FINANCEIRO =================
+  function setFinanceTab(tab, btnElement) {
+    currentFinanceTab = tab;
+    document.querySelectorAll('.fin-tab').forEach(b => b.classList.remove('active'));
+    if (btnElement) btnElement.classList.add('active');
+    else document.querySelector(`.fin-tab[onclick*="'${tab}'"]`)?.classList.add('active');
+    renderFinanceView();
+  }
+
+  function renderFinanceView() {
+    const now = new Date();
+    let filteredSales = [];
+    let filteredDraws = [];
+
+    if (currentFinanceTab === 'daily') {
+      const todayStr = now.toDateString();
+      filteredSales = window.sales.filter(s => new Date(s.date).toDateString() === todayStr);
+      filteredDraws = window.draws.filter(d => new Date(d.date).toDateString() === todayStr);
+    } else if (currentFinanceTab === 'weekly') {
+      const startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - now.getDay());
+      startOfWeek.setHours(0,0,0,0);
+      filteredSales = window.sales.filter(s => new Date(s.date) >= startOfWeek);
+      filteredDraws = window.draws.filter(d => new Date(d.date) >= startOfWeek);
+    } else if (currentFinanceTab === 'monthly') {
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      filteredSales = window.sales.filter(s => new Date(s.date) >= startOfMonth);
+      filteredDraws = window.draws.filter(d => new Date(d.date) >= startOfMonth);
+    } else if (currentFinanceTab === 'yearly') {
+      const startOfYear = new Date(now.getFullYear(), 0, 1);
+      filteredSales = window.sales.filter(s => new Date(s.date) >= startOfYear);
+      filteredDraws = window.draws.filter(d => new Date(d.date) >= startOfYear);
+    }
+
+    const totalSales = filteredSales.reduce((sum, s) => sum + s.total, 0);
+    const totalDraws = filteredDraws.reduce((sum, d) => sum + d.amount, 0);
+    const netBalance = totalSales - totalDraws;
+
+    document.getElementById('finTotalSales').textContent = 'R$ ' + totalSales.toFixed(2);
+    document.getElementById('finTotalDraws').textContent = 'R$ ' + totalDraws.toFixed(2);
+    document.getElementById('finNetBalance').textContent = 'R$ ' + netBalance.toFixed(2);
+
+    renderFinanceChart(filteredSales, filteredDraws);
+    renderFinanceHistory(filteredSales, filteredDraws);
+  }
+
+  function renderFinanceChart(sales, draws) {
+    const ctx = document.getElementById('financeChart').getContext('2d');
+    if (financeChartInstance) financeChartInstance.destroy();
+
+    let labels = [], salesData = [], drawsData = [];
+    const now = new Date();
+
+    if (currentFinanceTab === 'daily') {
+      for (let i = 0; i < 24; i++) {
+        labels.push(`${i.toString().padStart(2, '0')}h`);
+        salesData.push(sales.filter(s => new Date(s.date).getHours() === i).reduce((sum, s) => sum + s.total, 0));
+        drawsData.push(draws.filter(d => new Date(d.date).getHours() === i).reduce((sum, d) => sum + d.amount, 0));
+      }
+    } else if (currentFinanceTab === 'weekly') {
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(); d.setDate(d.getDate() - i);
+        labels.push(d.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit' }));
+        const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+        const dayEnd = dayStart + 86400000;
+        salesData.push(sales.filter(s => { const t = new Date(s.date).getTime(); return t >= dayStart && t < dayEnd; }).reduce((sum, s) => sum + s.total, 0));
+        drawsData.push(draws.filter(dr => { const t = new Date(dr.date).getTime(); return t >= dayStart && t < dayEnd; }).reduce((sum, dr) => sum + dr.amount, 0));
+      }
+    } else if (currentFinanceTab === 'monthly') {
+      const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+      for (let i = 1; i <= daysInMonth; i++) {
+        labels.push(i.toString());
+        const dayStart = new Date(now.getFullYear(), now.getMonth(), i).getTime();
+        const dayEnd = dayStart + 86400000;
+        salesData.push(sales.filter(s => { const t = new Date(s.date).getTime(); return t >= dayStart && t < dayEnd; }).reduce((sum, s) => sum + s.total, 0));
+        drawsData.push(draws.filter(dr => { const t = new Date(dr.date).getTime(); return t >= dayStart && t < dayEnd; }).reduce((sum, dr) => sum + dr.amount, 0));
+      }
+    } else if (currentFinanceTab === 'yearly') {
+      labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+      for (let i = 0; i < 12; i++) {
+        const monthStart = new Date(now.getFullYear(), i, 1).getTime();
+        const monthEnd = new Date(now.getFullYear(), i + 1, 0, 23, 59, 59).getTime();
+        salesData.push(sales.filter(s => { const t = new Date(s.date).getTime(); return t >= monthStart && t <= monthEnd; }).reduce((sum, s) => sum + s.total, 0));
+        drawsData.push(draws.filter(dr => { const t = new Date(dr.date).getTime(); return t >= monthStart && t <= monthEnd; }).reduce((sum, dr) => sum + dr.amount, 0));
+      }
+    }
+
+    financeChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          { label: 'Vendas', data: salesData, backgroundColor: '#10b981', borderRadius: 4 },
+          { label: 'Sangrias', data: drawsData, backgroundColor: '#ef4444', borderRadius: 4 }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: '#c5cdd8' } } },
+        scales: {
+          x: { ticks: { color: '#8892a8' }, grid: { color: '#2a3150' } },
+          y: { ticks: { color: '#8892a8', callback: v => 'R$'+v }, grid: { color: '#2a3150' } }
+        }
+      }
+    });
+  }
+
+  function renderFinanceHistory(sales, draws) {
+    const list = document.getElementById('financeHistoryList');
+    const combined = [
+      ...sales.map(s => ({ type: 'sale', date: new Date(s.date), value: s.total, desc: `Venda #${String(s.id).slice(-6)}` })),
+      ...draws.map(d => ({ type: 'draw', date: new Date(d.date), value: d.amount, desc: d.reason || 'Sangria' }))
+    ].sort((a, b) => b.date - a.date).slice(0, 20);
+
+    if (combined.length === 0) {
+      list.innerHTML = '<div class="empty" style="padding: 20px;"><div class="empty-text">Nenhuma movimentação neste período</div></div>';
+      return;
+    }
+
+    list.innerHTML = combined.map(item => {
+      const timeStr = item.date.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+      const dateStr = item.date.toLocaleDateString('pt-BR');
+      const isSale = item.type === 'sale';
+      return `
+        <div class="fin-history-item">
+          <div class="fin-history-info">
+            <div class="fin-history-title">${escapeHtml(item.desc)}</div>
+            <div class="fin-history-sub">${dateStr} às ${timeStr}</div>
+          </div>
+          <div class="fin-history-value ${isSale ? 'sale' : 'draw'}">
+            ${isSale ? '+' : '-'} R$ ${item.value.toFixed(2)}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function openDrawModal() {
+    document.getElementById('drawAmount').value = '';
+    document.getElementById('drawReason').value = '';
+    document.getElementById('drawModal').classList.add('active');
+  }
+  function closeDrawModal() { document.getElementById('drawModal').classList.remove('active'); }
+  function saveDraw() {
+    const amount = parseFloat(document.getElementById('drawAmount').value);
+    const reason = document.getElementById('drawReason').value.trim();
+    if (!amount || amount <= 0) { toast('Informe um valor válido!', 'error'); return; }
+
+    const drawObj = {
+      id: Date.now(),
+      amount: amount,
+      reason: reason,
+      date: new Date().toISOString()
+    };
+
+    if (window.saveDrawFirebase) window.saveDrawFirebase(drawObj);
+    closeDrawModal();
+    toast('Sangria registrada com sucesso!', 'success');
+  }
+  // ==============================================
 
   document.getElementById('manualCode').addEventListener('keypress', (e) => { if (e.key === 'Enter') addByCode(); });
   renderCart();
