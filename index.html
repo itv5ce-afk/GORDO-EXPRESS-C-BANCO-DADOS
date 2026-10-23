@@ -1538,6 +1538,30 @@
     </div>
   </div>
 
+  <!-- MODAL EDITAR SANGRIA -->
+  <div class="modal-overlay" id="editDrawModal">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <div class="modal-header-row">
+        <div class="modal-title">✏️ Editar Sangria</div>
+        <button class="modal-icon-btn" onclick="closeEditDrawModal()">✕</button>
+      </div>
+      <input type="hidden" id="editDrawId">
+      <div class="input-group">
+        <label>Valor da Sangria (R$) *</label>
+        <input type="number" id="editDrawAmount" placeholder="0,00" step="0.01" min="0">
+      </div>
+      <div class="input-group">
+        <label>Motivo / Observação</label>
+        <textarea id="editDrawReason" placeholder="Ex: Pagamento de fornecedor, retirada para caixa pequeno..." maxlength="100" rows="2"></textarea>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:8px;">
+        <button class="btn btn-dark" onclick="closeEditDrawModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveEditDraw()">💾 Salvar Alterações</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <audio id="bellSound" preload="auto">
@@ -2597,7 +2621,7 @@
     const list = document.getElementById('financeHistoryList');
     const combined = [
       ...sales.map(s => ({ type: 'sale', date: new Date(s.date), value: s.total, desc: `Venda #${String(s.id).slice(-6)}` })),
-      ...draws.map(d => ({ type: 'draw', date: new Date(d.date), value: d.amount, desc: d.reason || 'Sangria' }))
+      ...draws.map(d => ({ type: 'draw', date: new Date(d.date), value: d.amount, desc: d.reason || 'Sangria', id: d.id }))
     ].sort((a, b) => b.date - a.date).slice(0, 20);
 
     if (combined.length === 0) {
@@ -2609,10 +2633,14 @@
       const timeStr = item.date.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
       const dateStr = item.date.toLocaleDateString('pt-BR');
       const isSale = item.type === 'sale';
+      const editBtn = !isSale ? `<button class="icon-btn edit" style="margin-left: 8px;" onclick="openEditDrawModal(${item.id})" title="Editar Sangria">✏️</button>` : '';
       return `
         <div class="fin-history-item">
           <div class="fin-history-info">
-            <div class="fin-history-title">${escapeHtml(item.desc)}</div>
+            <div class="fin-history-title" style="display: flex; align-items: center;">
+              ${escapeHtml(item.desc)}
+              ${editBtn}
+            </div>
             <div class="fin-history-sub">${dateStr} às ${timeStr}</div>
           </div>
           <div class="fin-history-value ${isSale ? 'sale' : 'draw'}">
@@ -2644,6 +2672,56 @@
     if (window.saveDrawFirebase) window.saveDrawFirebase(drawObj);
     closeDrawModal();
     toast('Sangria registrada com sucesso!', 'success');
+  }
+
+  function openEditDrawModal(id) {
+    const draw = window.draws.find(d => d.id === id);
+    if (!draw) return;
+    document.getElementById('editDrawId').value = draw.id;
+    document.getElementById('editDrawAmount').value = draw.amount;
+    document.getElementById('editDrawReason').value = draw.reason || '';
+    document.getElementById('editDrawModal').classList.add('active');
+  }
+
+  function closeEditDrawModal() {
+    document.getElementById('editDrawModal').classList.remove('active');
+  }
+
+  function saveEditDraw() {
+    const id = parseInt(document.getElementById('editDrawId').value);
+    const amount = parseFloat(document.getElementById('editDrawAmount').value);
+    const reason = document.getElementById('editDrawReason').value.trim();
+
+    if (!amount || amount <= 0) {
+      toast('Informe um valor válido!', 'error');
+      return;
+    }
+
+    const drawIndex = window.draws.findIndex(d => d.id === id);
+    if (drawIndex === -1) {
+      toast('Sangria não encontrada!', 'error');
+      return;
+    }
+
+    const updatedDraw = {
+      ...window.draws[drawIndex],
+      amount: amount,
+      reason: reason
+    };
+
+    window.draws[drawIndex] = updatedDraw;
+    localStorage.setItem('pdv_draws', JSON.stringify(window.draws));
+
+    if (window.saveDrawFirebase) {
+      window.saveDrawFirebase(updatedDraw);
+    }
+
+    closeEditDrawModal();
+    toast('Sangria atualizada com sucesso!', 'success');
+    
+    if (document.getElementById('viewFinance').classList.contains('active')) {
+      renderFinanceView();
+    }
   }
   // ==============================================
 
