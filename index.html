@@ -1708,6 +1708,11 @@
     if (!window.db) return;
     try { await setDoc(doc(window.db, "draws", String(draw.id)), draw); } catch(e) { console.error(e); }
   };
+
+  window.deleteDrawFirebase = async function(id) {
+    if (!window.db) return;
+    try { await deleteDoc(doc(window.db, "draws", String(id))); } catch(e) { console.error(e); }
+  };
 </script>
 
 <script>
@@ -2633,13 +2638,16 @@
       const timeStr = item.date.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
       const dateStr = item.date.toLocaleDateString('pt-BR');
       const isSale = item.type === 'sale';
-      const editBtn = !isSale ? `<button class="icon-btn edit" style="margin-left: 8px;" onclick="openEditDrawModal(${item.id})" title="Editar Sangria">✏️</button>` : '';
+      const actionBtns = !isSale ? `
+        <button class="icon-btn edit" style="margin-left: 8px;" onclick="openEditDrawModal(${item.id})" title="Editar Sangria">✏️</button>
+        <button class="icon-btn delete" style="margin-left: 4px;" onclick="deleteDraw(${item.id})" title="Deletar Sangria">🗑️</button>
+      ` : '';
       return `
         <div class="fin-history-item">
           <div class="fin-history-info">
             <div class="fin-history-title" style="display: flex; align-items: center;">
               ${escapeHtml(item.desc)}
-              ${editBtn}
+              ${actionBtns}
             </div>
             <div class="fin-history-sub">${dateStr} às ${timeStr}</div>
           </div>
@@ -2722,6 +2730,12 @@
     if (document.getElementById('viewFinance').classList.contains('active')) {
       renderFinanceView();
     }
+  }
+
+  function deleteDraw(id) {
+    if (!confirm('Deseja realmente deletar esta sangria?')) return;
+    if (window.deleteDrawFirebase) window.deleteDrawFirebase(id);
+    toast('Sangria deletada com sucesso!', 'success');
   }
   // ==============================================
 
